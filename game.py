@@ -2,6 +2,34 @@ from tkinter import *
 import time
 import random
 
+class Game:
+    def __init__(self):
+        self.tk=Tk()
+        self.tk.title("Ms Pict Rase for the Exit")
+        self.tk.resizable(0,0)
+        self.tk.wm_attributes("-topmost",1)
+        self.canvas=Canvas(self.tk,width=500,height=500,highlightthickness=0)
+        self.canvas.pack()
+        self.tk.update()
+        self.canvas_height=500
+        self.canvas_width=500
+        self.bg=PhotoImage(file='background.gif')
+        w=self.bg.width()
+        h=self.bg.height() 
+        for i in range(0,5):
+            for j in range(0,5):
+                self.canvas.create_image(i*w,j*h,image=self.bg,anchor='nw')
+        self.sprites=[]
+        self.running=True    
+
+    def mainloop(self):
+        while True:
+            if self.running==True:
+                for sprite in self.sprites:
+                    sprite.move()
+            self.tk.update()
+            time.sleep(0.01)
+
 class Coords:
     def __init__(self,x1=0,y1=0,x2=0,y2=0):
         self.x1=x1
@@ -58,34 +86,43 @@ def collided_bottom(co1,co2):
             return True
     return False     
 
-class Game:
-    def __init__(self):
-        self.tk=Tk()
-        self.tk.title("Ms Pict Rase for the Exit")
-        self.tk.resizable(0,0)
-        self.tk.wm_attributes("-topmost",1)
-        self.canvas=Canvas(self.tk,width=500,height=500,highlightthickness=0)
-        self.canvas.pack()
-        self.tk.update()
-        self.canvas_height=500
-        self.canvas_width=500
-        self.bg=PhotoImage(file='background.gif')
-        w=self.bg.width()
-        h=self.bg.height() 
-        for i in range(0,5):
-            for j in range(0,5):
-                self.canvas.create_image(i*w,j*h,image=self.bg,anchor='nw')
-        self.sprites=[]
-        self.running=True    
+class Sprite:
+    def __init__(self,game):
+        self.game=game
+        self.endgame=FALSE
+        self.coordinates=NONE
+    def move(self):
+        pass
+    def coords(self):
+        return self.coordinates
 
-    def mainloop(self):
-        while True:
-            if self.running==True:
-                for sprite in self.sprites:
-                    sprite.move()
-            self.tk.update()
-            time.sleep(0.01)
+class PlatformSprite(Sprite):
+    def __init__(self,game,photo_image,x,y,width,height):
+        Sprite.__init__(self,game)
+        self.photo_image=photo_image
+        self.image=game.canvas.create_image(x,y,image=self.photo_image,anchor='nw')
+        self.coordinates=Coords(x,y,x+width,y+height)
 
 g=Game()
+platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
+platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,440,100,10)
+platform3=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,400,100,10)
+platform4=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,160,100,10)
+platform5=PlatformSprite(g,PhotoImage(file="platform2.gif"),175,350,66,10)
+platform6=PlatformSprite(g,PhotoImage(file="platform2.gif"),50,300,66,10)
+platform7=PlatformSprite(g,PhotoImage(file="platform2.gif"),170,120,66,10)
+platform8=PlatformSprite(g,PhotoImage(file="platform2.gif"),45,60,66,10)
+platform9=PlatformSprite(g,PhotoImage(file="platform3.gif"),170,250,32,10)
+platform10=PlatformSprite(g,PhotoImage(file="platform3.gif"),230,200,32,10)
+g.sprites.append(platform1)
+g.sprites.append(platform2)
+g.sprites.append(platform3)
+g.sprites.append(platform4)
+g.sprites.append(platform5)
+g.sprites.append(platform6)
+g.sprites.append(platform7)
+g.sprites.append(platform8)
+g.sprites.append(platform9)
+g.sprites.append(platform10)
 g.mainloop()
 
