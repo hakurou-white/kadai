@@ -103,7 +103,7 @@ class PlatformSprite(Sprite):
         self.image=game.canvas.create_image(x,y,image=self.photo_image,anchor='nw')
         self.coordinates=Coords(x,y,x+width,y+height)
 
-class StickFigureSprite(Sprite):
+class PictFigureSprite(Sprite):
     def __init__(self,game):
         Sprite.__init__(self,game)
         self.images_left=[
@@ -140,9 +140,75 @@ class StickFigureSprite(Sprite):
         if self.y==0:
             self.y=-4
             self.jump_count=0
-    
 
+    def animate(self):
+        if self.x!=0 and self.y==0:
+            if time.time()-self.last_time>0.1:
+                self.last_time=time.time()
+                self.current_image=self.current_image+self.current_image_add
+                if self.current_image>=2:
+                    self.current_image_add=-1
+                if self.current_image<=0:
+                    self.current_image_add=1
 
+        if self.x<0:
+            if self.y!=0:
+                self.game.canvas.itemconfig(self.image,image=self.images_left[2])
+            else:
+                self.game.canvas.itemconfig(self.image,image=self.images_left[self.current_image])
+        elif self.x>0:
+            if self.y!=0:
+                self.game.canvas.itemconfig(self.image,image=self.images_right[2])
+            else:
+                self.game.canvas.itemconfig(self.image,image=self.images_right[self.current_image])
+
+    def coords(self):
+        xy=self.game.canvas.coords(self.image)
+        self.coordinates.x1=xy[0]
+        self.coordinates.y1=xy[1]
+        self.coordinates.x2=xy[0]+27
+        self.coordinates.y2=xy[1]+30
+        return self.coordinates
+
+    def move(self):
+        self.animate()
+        if self.y<0:
+            self.jump_count=self.jump_count+1
+            if self.jump_count>20:
+                self.y=4
+        if self.y>0:
+            self.jump_count=self.jump_count-1
+        co=self.coords()
+        left=True
+        right=True
+        top=True
+        bottom=True
+        falling=True
+        if self.y>0 and co.y2>=self.game.canvas_height:
+            self.y=0
+            bottom=False
+        elif self.y<0 and co.y1<=0:
+            self.y=0
+            top=False
+        if self.x>0 and co.x2>=self.game.canvas_width:
+            self.x=0
+            right=False
+        elif self.x<0 and co.x1<=0:
+            self.x=0
+            left=False
+        for sprite in self.game.sprites:
+            if sprite==self:
+                continue
+            sprite_co=sprite.coords()
+            if top and self.y<0 and collided_top(co,sprite_co):
+                self.y=-self.y
+                top=False
+            if bottom and self.y>0 and collided_bottom(self,y,co,sprite_co):
+                self.y=sprite_co.y1-co.y2
+                if self.y<0:
+                    self.y=0
+                bottom=False
+                top=False
 
 g=Game()
 platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
