@@ -209,6 +209,8 @@ class PictFigureSprite(Sprite):
                     self.y=0
                 bottom=False
                 top=False
+            if bottom and falling and self.y==0 and co.y2<self.game.convas_height and collided_bottom(1,co,sprite_co):
+                falling=False
 
 g=Game()
 platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
