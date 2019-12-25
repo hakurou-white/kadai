@@ -1,6 +1,7 @@
 from tkinter import *
 import time
 import random
+import sys
 
 class Game:
     def __init__(self):
@@ -20,21 +21,25 @@ class Game:
             for j in range(0,5):
                 self.canvas.create_image(i*w,j*h,image=self.bg,anchor='nw')
         self.sprites=[]
-        self.running=True    
+        self.running=True 
+        self.gameover=False   
 
     def mainloop(self):
         i=0
         while True:
             if i==1:
-                time.sleep(5)
+                time.sleep(4)
                 break
+            if self.gameover==True:
+                self.canvas.create_text(250,250,text='Game Over!',font=('Times',30),fill='red')
+                i=1
             if self.running==True:
                 for sprite in self.sprites:
                     sprite.move()
             if self.running==False:
                 door1=DoorSprite(g,PhotoImage(file="door1.gif"),45,30,40,35)
                 g.sprites.append(door1)
-                self.canvas.create_text(250,250,text='You Win!',font=('Times',30),fill='red')
+                self.canvas.create_text(250,250,text='Game Cear!',font=('Times',30),fill='red')
                 i=1
             self.tk.update()
             time.sleep(0.01)
@@ -99,6 +104,7 @@ class Sprite:
     def __init__(self,game):
         self.game=game
         self.endgame=FALSE
+        self.gameover=FALSE
         self.coordinates=NONE
     def move(self):
         pass
@@ -126,7 +132,7 @@ class PictFigureSprite(Sprite):
             PhotoImage(file="figure-R3.gif")
         ]
         self.image_pict=PhotoImage(file="pict.gif")
-        self.image=game.canvas.create_image(200,470,image=self.images_left[0],anchor='nw')
+        self.image=game.canvas.create_image(0,450,image=self.images_left[0],anchor='nw')
         self.x=-2
         self.y=0
         self.current_image=0
@@ -197,6 +203,8 @@ class PictFigureSprite(Sprite):
         if self.y>0 and co.y2>=self.game.canvas_height:
             self.y=0
             bottom=False
+            if select=="Ex":
+                self.game.gameover=True
         elif self.y<0 and co.y1<=0:
             self.y=0
             top=False
@@ -248,16 +256,57 @@ class DoorSprite(Sprite):
                 
         
 g=Game()
-platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
-platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,440,100,10)
-platform3=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,400,100,10)
-platform4=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,160,100,10)
-platform5=PlatformSprite(g,PhotoImage(file="platform2.gif"),175,350,66,10)
-platform6=PlatformSprite(g,PhotoImage(file="platform2.gif"),50,300,66,10)
-platform7=PlatformSprite(g,PhotoImage(file="platform2.gif"),170,120,66,10)
-platform8=PlatformSprite(g,PhotoImage(file="platform2.gif"),45,60,66,10)
-platform9=PlatformSprite(g,PhotoImage(file="platform3.gif"),170,250,32,10)
-platform10=PlatformSprite(g,PhotoImage(file="platform3.gif"),230,200,32,10)
+print("Select Stage")
+print("Easy or Normal or Hard")
+stage=input()
+select=stage.capitalize()
+if select=="Easy":
+    platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
+    platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,430,100,10)
+    platform3=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,380,100,10)
+    platform4=PlatformSprite(g,PhotoImage(file="platform1.gif"),450,330,100,10)
+    platform5=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,280,100,10)
+    platform6=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,250,100,10)
+    platform7=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,210,100,10)
+    platform8=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,150,100,10)
+    platform9=PlatformSprite(g,PhotoImage(file="platform3.gif"),85,105,32,10)
+    platform10=PlatformSprite(g,PhotoImage(file="platform3.gif"),45,60,32,10)
+elif select=="Normal":
+    platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
+    platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,440,100,10)
+    platform3=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,400,100,10)
+    platform4=PlatformSprite(g,PhotoImage(file="platform2.gif"),175,350,66,10)
+    platform5=PlatformSprite(g,PhotoImage(file="platform2.gif"),50,300,66,10)
+    platform6=PlatformSprite(g,PhotoImage(file="platform3.gif"),170,250,32,10)
+    platform7=PlatformSprite(g,PhotoImage(file="platform3.gif"),230,200,32,10)
+    platform8=PlatformSprite(g,PhotoImage(file="platform1.gif"),300,160,100,10)
+    platform9=PlatformSprite(g,PhotoImage(file="platform2.gif"),170,120,66,10)
+    platform10=PlatformSprite(g,PhotoImage(file="platform2.gif"),45,60,66,10) 
+elif select=="Hard":
+    platform1=PlatformSprite(g,PhotoImage(file="platform2.gif"),0,480,66,10)
+    platform2=PlatformSprite(g,PhotoImage(file="platform3.gif"),100,430,32,10)
+    platform3=PlatformSprite(g,PhotoImage(file="platform3.gif"),190,380,32,10)
+    platform4=PlatformSprite(g,PhotoImage(file="platform3.gif"),280,330,32,10)
+    platform5=PlatformSprite(g,PhotoImage(file="platform3.gif"),370,280,32,10)
+    platform6=PlatformSprite(g,PhotoImage(file="platform3.gif"),460,230,32,10)
+    platform7=PlatformSprite(g,PhotoImage(file="platform3.gif"),370,180,32,10)
+    platform8=PlatformSprite(g,PhotoImage(file="platform3.gif"),280,130,32,10)
+    platform9=PlatformSprite(g,PhotoImage(file="platform2.gif"),160,100,66,10)
+    platform10=PlatformSprite(g,PhotoImage(file="platform2.gif"),45,60,66,10) 
+elif select=="Ex":
+    platform1=PlatformSprite(g,PhotoImage(file="platform2.gif"),0,480,66,10)
+    platform2=PlatformSprite(g,PhotoImage(file="platform3.gif"),100,430,32,10)
+    platform3=PlatformSprite(g,PhotoImage(file="platform3.gif"),190,380,32,10)
+    platform4=PlatformSprite(g,PhotoImage(file="platform3.gif"),280,330,32,10)
+    platform5=PlatformSprite(g,PhotoImage(file="platform3.gif"),370,280,32,10)
+    platform6=PlatformSprite(g,PhotoImage(file="platform3.gif"),460,230,32,10)
+    platform7=PlatformSprite(g,PhotoImage(file="platform3.gif"),370,180,32,10)
+    platform8=PlatformSprite(g,PhotoImage(file="platform3.gif"),280,130,32,10)
+    platform9=PlatformSprite(g,PhotoImage(file="platform2.gif"),160,100,66,10)
+    platform10=PlatformSprite(g,PhotoImage(file="platform2.gif"),45,60,66,10) 
+else:
+    sys.exit()
+
 g.sprites.append(platform1)
 g.sprites.append(platform2)
 g.sprites.append(platform3)
@@ -272,7 +321,4 @@ door=DoorSprite(g,PhotoImage(file="door2.gif"),45,30,40,35)
 g.sprites.append(door)
 sf=PictFigureSprite(g)
 g.sprites.append(sf)
-g.mainloop()
-
-print("game clera")
-                    
+g.mainloop()                  
