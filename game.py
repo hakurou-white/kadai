@@ -79,7 +79,7 @@ def collided_top(co1,co2):
             return True
     return False  
 
-def collided_bottom(co1,co2):
+def collided_bottom(y,co1,co2):
     if within_x(co1,co2):
         y_calc=co1.y2+y
         if y_calc>=co2.y1 and y_calc<=co2.y2:
@@ -203,15 +203,23 @@ class PictFigureSprite(Sprite):
             if top and self.y<0 and collided_top(co,sprite_co):
                 self.y=-self.y
                 top=False
-            if bottom and self.y>0 and collided_bottom(self,y,co,sprite_co):
+            if bottom and self.y>0 and collided_bottom(self.y,co,sprite_co):
                 self.y=sprite_co.y1-co.y2
                 if self.y<0:
                     self.y=0
                 bottom=False
                 top=False
-            if bottom and falling and self.y==0 and co.y2<self.game.convas_height and collided_bottom(1,co,sprite_co):
+            if bottom and falling and self.y==0 and co.y2<self.game.canvas_height and collided_bottom(1,co,sprite_co):
                 falling=False
-
+            if left and self.x<0 and collided_left(co,sprite_co):
+                self.x=0
+                left=False
+            if right and self.x>0 and collided_right(co,sprite_co):
+                self.x=0
+                right=False
+        if falling and bottom and self.y==0 and co.y2<self.game.canvas_height:
+            self.y=4
+        self.game.canvas.move(self.image,self.x,self.y)
 g=Game()
 platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
 platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,440,100,10)
@@ -233,5 +241,7 @@ g.sprites.append(platform7)
 g.sprites.append(platform8)
 g.sprites.append(platform9)
 g.sprites.append(platform10)
+sf=PictFigureSprite(g)
+g.sprites.append(sf)
 g.mainloop()
 
