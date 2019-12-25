@@ -23,10 +23,19 @@ class Game:
         self.running=True    
 
     def mainloop(self):
+        i=0
         while True:
+            if i==1:
+                time.sleep(5)
+                break
             if self.running==True:
                 for sprite in self.sprites:
                     sprite.move()
+            if self.running==False:
+                door1=DoorSprite(g,PhotoImage(file="door1.gif"),45,30,40,35)
+                g.sprites.append(door1)
+                self.canvas.create_text(250,250,text='You Win!',font=('Times',30),fill='red')
+                i=1
             self.tk.update()
             time.sleep(0.01)
 
@@ -116,6 +125,7 @@ class PictFigureSprite(Sprite):
             PhotoImage(file="figure-R2.gif"),
             PhotoImage(file="figure-R3.gif")
         ]
+        self.image_pict=PhotoImage(file="pict.gif")
         self.image=game.canvas.create_image(200,470,image=self.images_left[0],anchor='nw')
         self.x=-2
         self.y=0
@@ -214,12 +224,29 @@ class PictFigureSprite(Sprite):
             if left and self.x<0 and collided_left(co,sprite_co):
                 self.x=0
                 left=False
+                if sprite.endgame:
+                    self.game.canvas.itemconfig(self.image,image=self.image_pict)
+                    self.game.running=False
             if right and self.x>0 and collided_right(co,sprite_co):
                 self.x=0
                 right=False
+                if sprite.endgame:
+                    self.game.canvas.itemconfig(self.image,image=self.image_pict)
+                    self.game.running=False
+
         if falling and bottom and self.y==0 and co.y2<self.game.canvas_height:
             self.y=4
         self.game.canvas.move(self.image,self.x,self.y)
+
+class DoorSprite(Sprite):
+    def __init__(self,game,photo_image,x,y,width,height):
+        Sprite.__init__(self,game)
+        self.photo_image=photo_image
+        self.image=game.canvas.create_image(x,y,image=self.photo_image,anchor='nw')
+        self.coordinates=Coords(x,y,x+(width/2),y+height)
+        self.endgame=True
+                
+        
 g=Game()
 platform1=PlatformSprite(g,PhotoImage(file="platform1.gif"),0,480,100,10)
 platform2=PlatformSprite(g,PhotoImage(file="platform1.gif"),150,440,100,10)
@@ -241,7 +268,11 @@ g.sprites.append(platform7)
 g.sprites.append(platform8)
 g.sprites.append(platform9)
 g.sprites.append(platform10)
+door=DoorSprite(g,PhotoImage(file="door2.gif"),45,30,40,35)
+g.sprites.append(door)
 sf=PictFigureSprite(g)
 g.sprites.append(sf)
 g.mainloop()
 
+print("game clera")
+                    
